@@ -2,10 +2,13 @@
 
 ### 1.サンプルアプリケーションの起動
     
+　　
     <img src="images/Puma_boot.png" width="500px">
+
 
    ブラウザで起動し、testの画像を登録した状態
    
+　　
     <img src="images/sample.png" width="500px">
 
 ### 2.APサーバーについて
@@ -14,10 +17,12 @@
 
 　　'puma ver6.4.2'
 　　
+　　
     <img src="images/Puma_version.png" width="500px">
 
 2. APサーバーを終了させた場合のアクセスの確認
 
+　　
     <img src="images/Puma_stop.png" width="500px">
 
    APサーバーを終了させた場合、アクセスできなくなる
@@ -28,10 +33,12 @@
 
   'mysqlver 8.4.0'
   
+　　
     <img src="images/MySQL_version.png" width="500px">
 
 2. DB サーバーを終了させた場合のアクセス確認
 
+　　
     <img src="images/MySQL_stop.png" width="500px">
     
    DBサーバーを終了させた場合、アクセスできなくなる
