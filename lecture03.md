@@ -2,7 +2,7 @@
 
 ### 1.サンプルアプリケーションの起動
     
-　　![Image 1](images/puma_boot.png)
+　　![Image 1](images/Puma_boot.png)
 
    ブラウザで起動し、testの画像を登録した状態
    
@@ -16,12 +16,12 @@
 　　'puma ver6.4.2'
 　　
 　　
-　　![Image 3](images/puma_version.png)
+　　![Image 3](images/Puma_version.png)
 
 2. APサーバーを終了させた場合のアクセスの確認
 
 　　
-　　![Image 4](images/puma_stop.png)
+　　![Image 4](images/Puma_stop.png)
 
    APサーバーを終了させた場合、アクセスできなくなる
 
