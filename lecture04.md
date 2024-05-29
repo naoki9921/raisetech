@@ -3,7 +3,7 @@
 ![VPC](/images/VPC.png)
 
 - EC2
-![EC2](/images/EC2.png)
+![EC2](/images/EC2_修正後.png)
 
 - EC2インバウンドルール
   ローカルPCとVPCのデフォルトDNSサーバのみ許可
