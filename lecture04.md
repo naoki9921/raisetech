@@ -6,8 +6,8 @@
 ![EC2](/images/EC2_修正後.png)
 
 - EC2インバウンドルール
-  ローカルPCとVPCのデフォルトDNSサーバのみ許可
-![EC2 インバウンドルール](/images/EC2_インバウンドルール_修正後_1.png)
+  ローカルPCのIPアドレスのみ許可
+![EC2 インバウンドルール](/images/EC2_インバウンドルール.png)
 
 - RDS
 ![RDS](/images/RDS.png)
