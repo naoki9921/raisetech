@@ -42,7 +42,7 @@
    ![S3に画像保存](/images/lecture05/s3_bucket_picture.png)
 
 ## 4.aws構成図  
-   ![aws環境構成図](/images/lecture05/diagram.png)
+   ![aws環境構成図](/images/lecture05/diagram2.png)
    
 ## 5.感想
  - 設定ファイルを編集したらその設定を読み込ませるために再起動をすることが必要なことを学んだ。
