@@ -25,7 +25,7 @@
 
 
 ## AWS利用料の見積作成  
- - 見積は[こちら](https://calculator.aws/#/estimate)
+ - 見積は[こちら](https://calculator.aws/#/estimate?id=e9c714ca69410ac0994f9b7c33056100b5aa0c3e)
 
 ## 現在の利用料金の確認
  - 今月の請求の概要
