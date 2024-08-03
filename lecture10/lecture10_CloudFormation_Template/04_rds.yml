@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+# RDSのテンプレート
+Description: create for RDS
+
+
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------# 
+Parameters:
+  RDSUsername:
+    Description: RDS User Name
+    Type: String
+    MinLength: 5
+    MaxLength: 128
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+  RDSUserPassword: 
+    Description: RDS User Password
+    Type: String
+    NoEcho: true
+    MinLength: 8
+    MaxLength: 128
+    AllowedPattern: "[a-zA-Z0-9]*"
+    # 入力が制約を満たさなかった場合にエラーメッセージを表示する
+    ConstraintDescription: "must contain only alphanumeric characters."
+
+
+Resources:
+# ------------------------------------------------------------#
+#  RDS(MySQL)
+# ------------------------------------------------------------#
+  RDSInstance: 
+    Type: AWS::RDS::DBInstance
+    Properties: 
+      Engine: MySQL
+      EngineVersion: 8.0.35
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      StorageType: gp2
+      MasterUsername: !Ref RDSUsername
+      MasterUserPassword: !Ref RDSUserPassword
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      # シングルAZ
+      MultiAZ: false
+      AvailabilityZone: us-east-1a
+      VPCSecurityGroups:
+        - !ImportValue lecture10-sg-rds
+      # 自動バックアップの無効化
+      BackupRetentionPeriod: 0
+      Tags: 
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-instance
+    DeletionPolicy: Delete
+
+# ------------------------------------------------------------#
+#  DBSubnetGroup
+# ------------------------------------------------------------#
+  DBSubnetGroup: 
+    Type: AWS::RDS::DBSubnetGroup
+    Properties: 
+      DBSubnetGroupDescription: DB Subnet
+      SubnetIds: 
+        - !ImportValue lecture10-PrivateSubnetid1
+        - !ImportValue lecture10-PrivateSubnetid2
+
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------#  
+Outputs:
+  RDSEndpoint:
+    Description: RDS endpoint
+    Value: !GetAtt RDSInstance.Endpoint.Address
+
+
+# ----------Outputsのメモ----------
+# VPCId：lecture10-VPCid
+# PublicSubnet1：lecture10-PublicSubnetid1
+# PublicSubnet2：lecture10-PublicSubnetid2
+# PrivateSubnet1：lecture10-PrivateSubnetid1
+# PrivateSubnet2：lecture10-PrivateSubnetid2
+# SecurityGroupIdsEC2：lecture10-sg-ec2
+# SecurityGroupIdsRDS：lecture10-sg-rds
+# SecurityGroupIdsALB：lecture10-sg-alb
+# EC2PublicIP：lecture10-ec2-PublicIP
+# EC2PublicDnsName：lecture10-ec2-PublicDnsName
+# EC2InstanceID：lecture10-ec2-InstanceID

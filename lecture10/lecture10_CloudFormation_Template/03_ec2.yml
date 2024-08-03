@@ -1,0 +1,138 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+# EC2のテンプレート
+Description: create for EC2 and KeyPair and IAMrole
+
+
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------# 
+Parameters:
+  OS: # Amazon Linux 2の最新のAMIを取得する
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+
+
+Resources:
+# ------------------------------------------------------------#
+#  KeyPair
+# ------------------------------------------------------------#
+# create KeyPair
+  KeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: !Sub ${AWS::StackName}-keypair
+
+# ------------------------------------------------------------#
+#  EC2
+# ------------------------------------------------------------#
+# create EC2
+  EC2instance: 
+    Type: AWS::EC2::Instance
+    Properties: 
+      ImageId: !Ref OS
+      InstanceType: t2.micro
+      AvailabilityZone: us-east-1a
+      KeyName: !Ref KeyPair
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          SubnetId: !ImportValue lecture10-PublicSubnetid1
+          GroupSet: 
+            - !ImportValue lecture10-sg-ec2
+    #ストレージの設定
+      BlockDeviceMappings: 
+        - DeviceName: /dev/xvda
+          Ebs: 
+            DeleteOnTermination: true
+            VolumeSize: 8
+            VolumeType: gp2
+    # IAMロールのアタッチ
+      IamInstanceProfile: !Ref S3InstanceProfile
+      Tags: 
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-instance
+#      UserData: 
+#        !Base64: |
+#          #!/bin/bash
+#          sudo yum update
+#         sudo amazon-linux-extras install nginx1
+#         sudo systemctl enable nginx
+#         sudo systemctl start nginx
+
+#-----------------------------------------------------------------------------
+# IAM Role to access S3 Bucket
+#-----------------------------------------------------------------------------
+  S3IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: S3AccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                  - s3:GetBucketLocation
+                Resource: 
+                  - arn:aws:s3:::<S3Bucket>
+                  - arn:aws:s3:::<S3Bucket>/*
+
+#-----------------------------------------------------------------------------
+# EC2インスタンスとロールを紐づけるのに、IAMインスタンスプロファイルを記述
+#-----------------------------------------------------------------------------
+  S3InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref S3IAMRole
+
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------#  
+Outputs:
+#EC2のパブリックIPアドレス
+  EC2PublicIP:
+    Description: Public IP of EC2 instance
+    Value: !GetAtt EC2instance.PublicIp
+    Export: 
+      Name: !Sub ${AWS::StackName}-PublicIP
+#EC2のDNS名
+  EC2PublicDnsName:
+    Description: PublicDnsName of EC2 instance
+    Value: !GetAtt EC2instance.PublicDnsName
+    Export: 
+      Name: !Sub ${AWS::StackName}-PublicDnsName
+#EC2のインスタンス名
+  EC2InstanceID:
+    Description: InstanceID of EC2 instance
+    Value: !Ref EC2instance
+    Export: 
+      Name: !Sub ${AWS::StackName}-InstanceID
+
+
+# ----------Outputsのメモ----------
+# VPCId：lecture10-VPCid
+# PublicSubnet1：lecture10-PublicSubnetid1
+# PublicSubnet2：lecture10-PublicSubnetid2
+# PrivateSubnet1：lecture10-PrivateSubnetid1
+# PrivateSubnet2：lecture10-PrivateSubnetid2
+# SecurityGroupIdsEC2：lecture10-sg-ec2
+# SecurityGroupIdsRDS：lecture10-sg-rds
+# SecurityGroupIdsALB：lecture10-sg-alb
