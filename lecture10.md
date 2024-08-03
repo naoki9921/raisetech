@@ -3,7 +3,7 @@
 ## 構成
 * 構成は大きくは、[第5回](./lecture05.md)の構成図の通りとなるように進めました。
 * 下表の各スタック単位でYMLファイルおきました。
-  * [lecture10_CloudFormation_Template](./lecture10_CloudFormation_Template/)
+  * [lecture10_CloudFormation_Template](./lecture10/lecture10_CloudFormation_Template/)
 * 下表の各スタック単位でレポートを分けました。表内のリンクを参照。
   
 |スタック|リソースなど|備考|リンク|
@@ -16,7 +16,7 @@
 |lecture10-s3|S3|DL可にする|[06_s3.md](./lecture10/06_s3.md)|
 
 ## 作成したスタック一覧（CloudFormationコンソール画面）
-![スタック](image/lecture10/00_全スタック作成.png)
+![スタック](images/lecture10/00_全スタック作成.png)
 
 ## 感想
 * スタック作成時にymlファイルの構成が間違っているせいでエラーが出て、それを解決しての繰り返しをすることが多く、苦労した。

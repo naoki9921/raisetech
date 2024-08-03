@@ -4,7 +4,7 @@
 [01_VPC.yml](./lecture10_CloudFormation_Template/01_vpc.yml)
 
 ## VPC
-![VPC](images/lecture10/01_VPC.png)
+![VPC](../images/lecture10/01_VPC.png)
 
 ## パブリックサブネット
 ![Public1](images/lecture10/01_PublicSubnet1.png)
