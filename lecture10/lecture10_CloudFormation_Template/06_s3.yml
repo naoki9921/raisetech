@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+# S3のテンプレート
+Description: create for S3
+
+
+Resources:
+# ------------------------------------------------------------#
+#  S3
+# ------------------------------------------------------------#
+  S3Bucket:
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-bucket-nk03
+      # アクセスコントロールリストは無効化し、バケットポリシーやユーザーポリシーを使用してアクセスの管理を行う
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      # パブリックアクセスを無効化し、バケット内データへのパブリックアクセスを拒否する
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-bucket
+
+# ------------------------------------------------------------#
+#  BucketPolicy
+# ------------------------------------------------------------#
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+            Action: 
+              - s3:GetObject
+              - s3:PutObject
+              - s3:ListBucket
+              - s3:DeleteObject
+              - s3:GetBucketLocation
+            Effect: Allow
+            Resource:
+              - !Sub arn:aws:s3:::${S3Bucket}
+              - !Sub arn:aws:s3:::${S3Bucket}/*
+            Principal: 
+              Service: ec2.amazonaws.com
+
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------#  
+Outputs:
+  S3Bucket:
+    Value: !Ref S3Bucket
+    Description: S3Bucket ID
+    Export:
+      Name: !Sub ${AWS::StackName}-bucketID
+
+
+# ----------Outputsのメモ----------
+# VPCId：lecture10-VPCid
+# PublicSubnet1：lecture10-PublicSubnetid1
+# PublicSubnet2：lecture10-PublicSubnetid2
+# PrivateSubnet1：lecture10-PrivateSubnetid1
+# PrivateSubnet2：lecture10-PrivateSubnetid2
+# SecurityGroupIdsEC2：lecture10-sg-ec2
+# SecurityGroupIdsRDS：lecture10-sg-rds
+# SecurityGroupIdsALB：lecture10-sg-alb
+# EC2PublicIP：lecture10-ec2-PublicIP
+# EC2PublicDnsName：lecture10-ec2-PublicDnsName
+# EC2InstanceID：lecture10-ec2-InstanceID
+# LoadBalancerDNSName：lecture10-alb-dnsname

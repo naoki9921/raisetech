@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+# ALBのテンプレート
+Description: create for ALB
+
+
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------# 
+Parameters:
+  NameBase:
+    Description: this is base name
+    Type: String
+    Default: lecture10
+
+
+Resources:
+# ------------------------------------------------------------#
+#  ALB
+# ------------------------------------------------------------#
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub ${NameBase}-alb
+      Subnets: 
+        - !ImportValue lecture10-PublicSubnetid1
+        - !ImportValue lecture10-PublicSubnetid2
+      SecurityGroups:
+        - !ImportValue lecture10-sg-alb
+      Tags: 
+        - Key: Name
+          Value: !Sub ${AWS::StackName}
+
+# ------------------------------------------------------------#
+#  TargetGroup
+# ------------------------------------------------------------#
+  TargetGroup: 
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties: 
+      Name: !Sub ${NameBase}-alb-tg
+      VpcId: !ImportValue lecture10-VPCid
+      Protocol: HTTP
+      Port: 80
+      Matcher: 
+        HttpCode: 200
+      Tags: 
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-tg
+      TargetType: instance
+      Targets: 
+        - Id: !ImportValue lecture10-ec2-InstanceID
+          Port: 80
+
+
+# ------------------------------------------------------------#
+#  ALBをTargetGroupに関連付け
+# ------------------------------------------------------------#
+  ALBListener: 
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties: 
+      DefaultActions: 
+        - TargetGroupArn: !Ref TargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------#  
+Outputs:
+  LoadBalancerDNSName:
+    Description: DNS name of the application load balancer
+    Value: !GetAtt ALB.DNSName
+    Export: 
+      Name: !Sub ${AWS::StackName}-dnsname
+
+
+# ----------Outputsのメモ----------
+# VPCId：lecture10-VPCid
+# PublicSubnet1：lecture10-PublicSubnetid1
+# PublicSubnet2：lecture10-PublicSubnetid2
+# PrivateSubnet1：lecture10-PrivateSubnetid1
+# PrivateSubnet2：lecture10-PrivateSubnetid2
+# SecurityGroupIdsEC2：lecture10-sg-ec2
+# SecurityGroupIdsRDS：lecture10-sg-rds
+# SecurityGroupIdsALB：lecture10-sg-alb
+# EC2PublicIP：lecture10-ec2-PublicIP
+# EC2PublicDnsName：lecture10-ec2-PublicDnsName
+# EC2InstanceID：lecture10-ec2-InstanceID

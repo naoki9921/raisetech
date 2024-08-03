@@ -1,0 +1,129 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+# SecurityGroupのテンプレート
+Description: create for SG
+
+
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------# 
+Parameters:
+  NameBase:
+    Description: this is base name
+    Type: String
+    Default: lecture10
+
+  VpcId:
+      Type: AWS::EC2::VPC::Id
+  
+  SgIngCidrIp:
+      Type: String
+      Default: 0.0.0.0/0
+
+  SgIngFromPort1:
+    Type: String
+    Default: 80
+
+  SgIngFromPort2:
+    Type: String
+    Default: 22
+
+  SgIngFromPort3:
+    Type: String
+    Default: 3306
+
+
+Resources:
+# ------------------------------------------------------------#
+# SecurityGroup
+# ------------------------------------------------------------# 
+# EC2（APサーバ）用のSG：HTTP(80ポート)とSSH接続(22ポート)
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${NameBase}-ec2-sg
+      GroupDescription: Allow http to client host
+      VpcId: !ImportValue lecture10-VPCid
+      # インバウンド設定
+      SecurityGroupIngress:
+        - #ALBからのインバウンド
+          IpProtocol: tcp
+          CidrIp: !Ref SgIngCidrIp
+          FromPort: !Ref SgIngFromPort1
+          ToPort: !Ref SgIngFromPort1
+        - #EC2へSSH接続
+          IpProtocol: tcp
+          CidrIp: !Ref SgIngCidrIp
+          FromPort: !Ref SgIngFromPort2
+          ToPort: !Ref SgIngFromPort2
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-ec2
+
+# RDS用のSG：MySQL用(3306ポート)
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${NameBase}-rds-sg
+      GroupDescription: Allow http to client host
+      VpcId: !ImportValue lecture10-VPCid
+      # インバウンド設定
+      SecurityGroupIngress:
+        - #MySQL用のインバウンド
+          IpProtocol: tcp
+          FromPort: !Ref SgIngFromPort3
+          ToPort: !Ref SgIngFromPort3
+          SourceSecurityGroupId: !Ref EC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-rds
+
+# ALB用のSG：HTTP(80ポート)
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${NameBase}-alb-sg
+      GroupDescription: Allow http to client host
+      VpcId: !ImportValue lecture10-VPCid
+      # インバウンド設定
+      SecurityGroupIngress:
+        - #外部からのインバウンド
+          IpProtocol: tcp
+          CidrIp: !Ref SgIngCidrIp
+          FromPort: !Ref SgIngFromPort1
+          ToPort: !Ref SgIngFromPort1
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-alb
+
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------#  
+Outputs:
+# EC2インスタンスのCloudFormationテンプレートの引数のため
+  SecurityGroupIdsEC2:
+    Description: SecurityGroupIds for EC2
+    Value: !Ref EC2SecurityGroup
+    Export: 
+      Name: !Sub ${AWS::StackName}-ec2
+# RDSインスタンスのCloudFormationテンプレートの引数のため
+  SecurityGroupIdsRDS:
+    Description: SecurityGroupIds for RDS
+    Value: !Ref RDSSecurityGroup
+    Export: 
+      Name: !Sub ${AWS::StackName}-rds
+# ALBインスタンスのCloudFormationテンプレートの引数のため
+  SecurityGroupIdsALB:
+    Description: SecurityGroupIds for ALB
+    Value: !Ref ALBSecurityGroup
+    Export: 
+      Name: !Sub ${AWS::StackName}-alb
+
+
+# ----------Outputsのメモ----------
+# VPCId：lecture10-VPCid
+# PublicSubnet1：lecture10-PublicSubnetid1
+# PublicSubnet2：lecture10-PublicSubnetid2
+# PrivateSubnet1：lecture10-PrivateSubnetid1
+# PrivateSubnet2：lecture10-PrivateSubnetid2
