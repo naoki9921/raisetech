@@ -17,6 +17,16 @@
 ![sample_spec_rbデフォルト](/images/lecture11/Test_File_Default.png)
 - after<br>
 ![sample_spec_rbアフター](/images/lecture11/Test_File.png)<br>
+- テスト項目<br>
+rubyのバージョンは3.2.3であること<br>
+bundlerのバージョンは2.3.14であること<br>
+railsのバージョンは7.1.3.2であること<br>
+nodeのバージョンは17.9.1であること<br>
+yarnのバージョンは1.22.19であること<br>
+gitがインストールされていること<br>
+Nginxをインストールしていること<br>
+ポート80番がリッスンであること<br>
+アプリケーションが正常に動作していることを確認<br>
 
 
 2. テスト実行
