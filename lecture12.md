@@ -1,6 +1,6 @@
 ## 第12回課題
 ### 課題内容
-**CircleCI の[サンプルコンフィグ](sample-config.yml)が正しく動作するようにリポジトリに組み込む**
+**CircleCI の[サンプルコンフィグ](lecture12/sample-config.yml)が正しく動作するようにリポジトリに組み込む**
 
 
 ### 実施内容
@@ -52,20 +52,26 @@ workflows:
   - AZのハードコーディング
   - ParametersであるVpcIdを使用していない
   - AWSの動的参照（Dynamic References）を使用していない<br>
-![エラー](images/lecture12/エラー内容.png)  
+![エラー1](images/lecture12/エラー内容1.png)  
+![エラー2](images/lecture12/エラー内容2.png) 
 
 * 解決方法
   - ハードコーディングエラー<br>
-  以下のように修正することで解決<br>
-![エラー解決1](images/lecture12/ハードコーディング.png)
+![エラー解決1](images/lecture12/ハードコーディング_bef.png)
+  - 以下のように修正することで解決<br>
+![エラー解決1](images/lecture12/ハードコーディング_aft.png)
 
   - ParametersであるVpcIdを使用していないエラー<br>
-  vpc.ymlからOutputsで呼び出しているため、記載されている文言を削除<br>
-![エラー解決2](images/lecture12/VpcId.png)
+![エラー解決2](images/lecture12/VpcId_bef.png)
+  - vpc.ymlからOutputsでVpcIdを呼び出しているため、記載されている文言を削除<br>
+![エラー解決2](images/lecture12/VpcId_aft.png)
 
   - AWSの動的参照（Dynamic References）を使用していないエラー<br>
-  動的参照（Dynamic References）を使用することで解決<br>
-![エラー解決3](images/lecture12/動的参照.png)
+![エラー解決3](images/lecture12/動的参照_bef1.png)
+![エラー解決3](images/lecture12/動的参照_bef2.png)
+  - 動的参照（Dynamic References）を使用することで解決<br>
+![エラー解決3](images/lecture12/動的参照_aft1.png)
+![エラー解決3](images/lecture12/動的参照_aft2.png)
 
 * 修正後、成功されたことを確認<br>
 ![成功](images/lecture12/成功結果.png)

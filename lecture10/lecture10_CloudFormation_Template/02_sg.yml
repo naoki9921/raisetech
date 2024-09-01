@@ -12,9 +12,6 @@ Parameters:
     Description: this is base name
     Type: String
     Default: lecture10
-
-  VpcId:
-      Type: AWS::EC2::VPC::Id
   
   SgIngCidrIp:
       Type: String
