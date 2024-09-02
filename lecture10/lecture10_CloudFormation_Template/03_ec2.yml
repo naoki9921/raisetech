@@ -32,7 +32,9 @@ Resources:
     Properties: 
       ImageId: !Ref OS
       InstanceType: t2.micro
-      AvailabilityZone: us-east-1a
+      AvailabilityZone: !Select 
+        - 0
+        - Fn::GetAZs: !Ref AWS::Region
       KeyName: !Ref KeyPair
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
